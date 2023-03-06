@@ -118,7 +118,3 @@ function buildCharts(sample) {
 
 });
 }
-
-
-
-
