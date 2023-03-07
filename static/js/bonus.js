@@ -6,13 +6,17 @@ d3.json(url).then(function(data) {
     buildCharts(data.names[0]);
     buildMetadata(data.names[0]);
     updateGaugeChart(data.metadata[0].wfreq);
-    }); 
+}); 
     
 // Dropdown change handler
 function optionChanged(newSample) {
-    buildCharts(newSample);
-    buildMetadata(newSample);
-    updateGaugeChart(newSample);
+    d3.json(url).then(function(data) {
+        var metadata = data.metadata;
+        var result = metadata.filter(sampleObj => sampleObj.id == newSample)[0];
+        buildCharts(newSample);
+        buildMetadata(newSample);
+        updateGaugeChart(result.wfreq);
+    });
 }
 
 // Demographics Panel 
