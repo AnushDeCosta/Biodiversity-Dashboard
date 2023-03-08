@@ -3,12 +3,12 @@ var url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1
 
 // Use D3 to fetch the JSON data and log it to the console
 d3.json(url).then(function(data) {
-    buildCharts(data.names[0]);
-    buildMetadata(data.names[0]);
-    updateGaugeChart(data.metadata[0].wfreq);
-}); 
+  buildCharts(data.names[0]);
+  buildMetadata(data.names[0]);
+  updateGaugeChart(data.metadata[0].wfreq);
+});
     
-// Dropdown change handler
+// Handler function for when the dropdown menu selection changes
 function optionChanged(newSample) {
     d3.json(url).then(function(data) {
         var metadata = data.metadata;
@@ -18,63 +18,80 @@ function optionChanged(newSample) {
         updateGaugeChart(result.wfreq);
     });
 }
+// Calculate level of washing frequency
+function updateGaugeChart(wfreq) {
+  var level = parseFloat(wfreq) * 10;
 
-// Demographics Panel 
-function buildMetadata(sample) {
-    d3.json(url).then((data) => {
-    var metadata = data.metadata;
-    // Filter the data for the object with the desired sample number
-    var resultArray = metadata.filter(sampleObj => sampleObj.id == sample);
-    var result = resultArray[0];
+  // Trig to calc meter point
+  var degrees = (180 - level) * 2,
+      radius = .5;
+  var radians = degrees * Math.PI / 180;
+  var x = radius * Math.cos(radians);
+  var y = radius * Math.sin(radians);
 
-    // Use d3 to select the panel with id of `#sample-metadata`
-    var PANEL = d3.select("#sample-metadata");
+  // Path: may have to change to create a better triangle
+  var mainPath = 'M -.0 -0.025 L .0 0.025 L ',
+      pathX = String(-x),
+      space = ' ',
+      pathY = String(y),
+      pathEnd = ' Z';
+  var path = mainPath.concat(pathX,space,pathY,pathEnd);
 
-    // Use `.html("") to clear any existing metadata
-    PANEL.html("");
+  var data = [    
+    {      
+    type: 'scatter',      x: [0], y:[0],
+    marker: {size: 18, color:'850000'},
+    showlegend: false,
+    // name: 'Wash Frequency',
+    // text: level.toFixed(0),
+    // hoverinfo: 'text+name'
+    },
+    {
+      values: [50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9,50],
+      rotation: 90,
+      text: ['8-9', '7-8', '6-7', '5-6', '4-5', '3-4', '2-3', '1-2', '0-1'],
+      textinfo: 'text',
+      textposition:'inside',
+      marker: {
+        colors: [
+          '#66240F',
+          '#993D16',
+          '#BF5B1B',
+          '#E68425',
+          '#FF992C',
+          '#FFAE60',
+          '#FFC484',
+          '#FFD8A8',
+          '#FFEDCC',
+          '#FFFFFF'
+        ]
+      },
+      hole: .4,
+      type: 'pie',
+      showlegend: false,
+    }
+  ];
 
-    // Use `Object.entries` to add each key and value pair to the panel
-    Object.entries(result).forEach(([key, value]) => {
-        PANEL.append("h6").text(`${key}: ${value}`);
-    });
-    });
+  var layout = {
+    shapes: [
+      {
+        type: 'path',
+        path: path + 'Z',
+        fillcolor: '850000',
+        line: {
+          color: '850000'
+        }
+      }
+    ],
+    title: '<b> Belly Button Washing Frequency </b> <br></br> Scrubs Per Week',
+    height: 600,
+    width: 600,
+    xaxis: {zeroline:false, showticklabels:false,
+            showgrid: false, range: [-1, 1]},
+    yaxis: {zeroline:false, showticklabels:false,
+            showgrid: false, range: [1, -1]}
+  };
+  
+  Plotly.newPlot('gauge', data, layout);
 }
 
-// function to update gauge chart
-function updateGaugeChart(wfreq) {
-    var data = [
-        {
-        type: "indicator",
-        mode: "gauge+number",
-        value: wfreq,
-        title: {text: "<b> Belly Button Washing Frequency </b> <br></br> Scrubs Per Week"},
-        gauge: {
-            axis: { range: [0, 9], tickwidth: 0, tickcolor: "66240F" },
-            bar: { color: "grey" },
-            bgcolor: "white",
-            borderwidth: 2,
-            bordercolor: "grey",
-            steps: [
-            { range: [0, 1], color: "#FFEDCC" },
-            { range: [1, 2], color: "#FFD8A8" },
-            { range: [2, 3], color: "#FFC484" },
-            { range: [3, 4], color: "#FFAE60" },
-            { range: [4, 5], color: "#FF992C" },
-            { range: [5, 6], color: "#E68425" },
-            { range: [6, 7], color: "#BF5B1B" },
-            { range: [7, 8], color: "#993D16" },
-            { range: [8, 9], color: "#66240F" },
-            ],
-        },
-        },
-    ];
-
-    var layout = {
-        width: 500,
-        height: 400,
-        margin: { t: 100, r: 25, l: 25, b: 25 },
-        font: { color: "66240F", family: "Arial" },
-    };
-
-    Plotly.newPlot("gauge", data, layout);
-    }

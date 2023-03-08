@@ -2,9 +2,11 @@
 var url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
 // Use D3 to fetch the JSON data and log it to the console
-d3.json(url).then(function (data) {
-  console.log(data);
-});
+d3.json(url).then(function(data) {
+    buildCharts(data.names[0]);
+    buildMetadata(data.names[0]);
+    updateGaugeChart(data.metadata[0].wfreq);
+}); 
 
 function init() {
   // Grab a reference to the dropdown select element
@@ -53,13 +55,12 @@ function buildMetadata(sample) {
     PANEL.html("");
 
     // Use `Object.entries` to add each key and value pair to the panel
-    // Hint: Inside the loop, you will need to use d3 to append new
-    // tags for each key-value in the metadata.
     Object.entries(result).forEach(([key, value]) => {
       PANEL.append("h6").text(`${key}: ${value}`);
     });
   });
 }
+
 
 // Build the horizontal bar chart
 function buildCharts(sample) {
@@ -83,6 +84,7 @@ function buildCharts(sample) {
       orientation: "h",
       marker: {color: otuIds}
       };
+
       // Create the data array for the plot
       var data = [trace];
       // Define the plot layout
@@ -107,7 +109,7 @@ function buildCharts(sample) {
     var data2 = [trace2];
     // Define the plot layout
     var layout2 = {
-      title: "Bacteria Cultures Per Sample",
+      // title: "Bacteria Cultures Per Sample",
       xaxis: { title: "OTU ID" },
       yaxis: { title: "Sample Values" },
       hovermode: "closest",
