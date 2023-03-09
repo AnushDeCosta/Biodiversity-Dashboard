@@ -7,7 +7,7 @@ Student Name - Anush De Costa Module 14 Challenge Name - Belly Button Biodiversi
 ## Introduction
 
 The task for the Module 14 challenge was to build an interactive dashboard to explore the Belly Button Biodiversity dataset, which catalogues the microbes that colonise human navels.
-You can find the GitHub Page for this <a href="https://anushdecosta.github.io/belly-button-challenge/" onclick="window.open(this.href,'_blank');return false;">here</a>.
+You can find the GitHub Page for this <a href="https://anushdecosta.github.io/belly-button-challenge/" onclick="window.open('https://anushdecosta.github.io/belly-button-challenge/', '_blank'); return false;">here</a>.
 
 This project consists of three main parts and a bonus part:
 
