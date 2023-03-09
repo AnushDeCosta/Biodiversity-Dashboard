@@ -1,4 +1,4 @@
-// Define the URL for the data file
+// Set the URL for the JSON data source
 var url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
 // Use D3 to fetch the JSON data and log it to the console
@@ -8,7 +8,7 @@ d3.json(url).then(function(data) {
   updateGaugeChart(data.metadata[0].wfreq);
 });
     
-// Handler function for when the dropdown menu selection changes
+// Function for when the user selects a new sample from the dropdown menu
 function optionChanged(newSample) {
     d3.json(url).then(function(data) {
         var metadata = data.metadata;
@@ -18,18 +18,18 @@ function optionChanged(newSample) {
         updateGaugeChart(result.wfreq);
     });
 }
-// Calculate level of washing frequency
+// Function to update the gauge chart based on the washing frequency
 function updateGaugeChart(wfreq) {
   var level = parseFloat(wfreq) * 10;
 
-  // Trig to calc meter point
+  
   var degrees = (180 - level) * 2,
       radius = .5;
   var radians = degrees * Math.PI / 180;
   var x = radius * Math.cos(radians);
   var y = radius * Math.sin(radians);
 
-  // Path: may have to change to create a better triangle
+  // Create the path for the needle of the gauge
   var mainPath = 'M -.0 -0.025 L .0 0.025 L ',
       pathX = String(-x),
       space = ' ',
@@ -37,16 +37,16 @@ function updateGaugeChart(wfreq) {
       pathEnd = ' Z';
   var path = mainPath.concat(pathX,space,pathY,pathEnd);
 
+  // Define the data and layout for the gauge chart
   var data = [    
-    {      
+    {
+    // Marker for the needle of the gauge      
     type: 'scatter',      x: [0], y:[0],
     marker: {size: 18, color:'850000'},
     showlegend: false,
-    // name: 'Wash Frequency',
-    // text: level.toFixed(0),
-    // hoverinfo: 'text+name'
     },
     {
+      // Pie chart to show the different washing frequency ranges
       values: [50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9,50],
       rotation: 90,
       text: ['8-9', '7-8', '6-7', '5-6', '4-5', '3-4', '2-3', '1-2', '0-1'],
@@ -71,7 +71,7 @@ function updateGaugeChart(wfreq) {
       showlegend: false,
     }
   ];
-
+  // Add the needle
   var layout = {
     shapes: [
       {
@@ -83,6 +83,7 @@ function updateGaugeChart(wfreq) {
         }
       }
     ],
+    // Set gauge chart properties
     title: '<b> Belly Button Washing Frequency </b> <br></br> Scrubs Per Week',
     height: 600,
     width: 600,
